@@ -18,36 +18,31 @@ class OvertimePayResource extends JsonResource
     public function toArray($request)
     {
         // return parent::toArray($request);
-        // $waktu_awal = strtotime($this->overtime->time_start);
-        // $waktu_akhir = strtotime($this->overtime->time_ended);
-        // $diff = $waktu_akhir - $waktu_awal;
-        // $jam = floor($diff / (60*60));
-        // if ($jam == 1) {
-        //     $jam = 1.5;
-        // }elseif ($jam == 2) {
-        //     $jam = 3.5;
-        // }elseif ($jam == 3) {
-        //     $jam = 5.5;
-        // }elseif ($jam == 4) {
-        //     $jam = 7.5;
-        // }
-        $saya = $this->overtime->id;
-        $malam = [];
-        foreach ($saya as $key) {
-            $malam = $key;
+        $waktu_awal = strtotime($this->overtime->time_start);
+        $waktu_akhir = strtotime($this->overtime->time_ended);
+        $diff = $waktu_akhir - $waktu_awal;
+        $jam = floor($diff / (60*60));
+        if ($jam == 1) {
+            $jam = 1.5;
+        }elseif ($jam == 2) {
+            $jam = 3.5;
+        }elseif ($jam == 3) {
+            $jam = 5.5;
+        }elseif ($jam == 4) {
+            $jam = 7.5;
         }
-        return $malam;
+
+        $amount = ($this->salary / 173) * $jam;
+
         return [
             'id' => $this->id,
-            // 'date' => $this->overtime->date,
+            'date' => $this->overtime->date,
             'name' => $this->name,
             'salary' => $this->salary,
             'overtimes' => $this->overtime,
-            'overtimes' => [
-                'id' => $malam->id
-            ],
-            'overtime_duration_total' => 'as',
-            'amount' => 'belum'
+            'overtimes' => new RelationOvertimeResource($this->overtime),
+            'overtime_duration_total' => $jam,
+            'amount' => number_format($amount)." " . "rb"
         ];
     }
 }
